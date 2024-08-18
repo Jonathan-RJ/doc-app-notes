@@ -1,0 +1,175 @@
+openapi: 3.0.0
+info:
+  title: CRUD NOTAS
+  description: Creación, obtención, actualización y eliminación de notas.
+  version: 0.1.9
+servers:
+  - url: http://note/service/crud
+    description: Servidor principal (producción)
+  - url: http://staging-api.example.com
+    description: Servidor de prueba (staging)
+paths:
+  /notes:
+    get:
+      summary: Obtiene una lista de todas las notas.
+      description: Devuelve un arreglo JSON con todas las notas existentes.
+      responses:
+        '200':
+          description: Lista de notas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NoteAll'
+        '500':
+          description: Error del servidor
+
+    post:
+      summary: Crea una nueva nota.
+      description: Permite la creación de una nueva nota con los datos proporcionados.
+      requestBody:
+        description: Datos de la nueva nota
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotePost'
+        required: true
+      responses:
+        '201':
+          description: Nota creada con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotePostResponse'
+        '400':
+          description: Solicitud incorrecta
+        '500':
+          description: Error del servidor
+
+  /notes/{noteId}:
+    get:
+      summary: Obtiene una nota específica por su ID.
+      description: Devuelve los detalles de una nota específica identificada por el ID.
+      parameters:
+        - name: noteId
+          in: path
+          required: true
+          description: ID de la nota a obtener
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Nota encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+        '404':
+          description: Nota no encontrada
+        '500':
+          description: Error del servidor
+
+    put:
+      summary: Actualiza una nota existente.
+      description: Permite actualizar los detalles de una nota específica.
+      parameters:
+        - name: noteId
+          in: path
+          required: true
+          description: ID de la nota a actualizar
+          schema:
+            type: string
+      requestBody:
+        description: Datos actualizados de la nota
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotePost'
+        required: true
+      responses:
+        '200':
+          description: Nota actualizada con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotePostResponse'
+        '400':
+          description: Solicitud incorrecta
+        '404':
+          description: Nota no encontrada
+        '500':
+          description: Error del servidor
+
+    delete:
+      summary: Elimina una nota por su ID.
+      description: Permite eliminar una nota específica identificada por el ID.
+      parameters:
+        - name: noteId
+          in: path
+          required: true
+          description: ID de la nota a eliminar
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Nota eliminada con éxito
+        '404':
+          description: Nota no encontrada
+        '500':
+          description: Error del servidor
+
+components:
+  schemas:
+    Note:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 123
+        title:
+          type: string
+          example: 'Título de la nota'
+        content:
+          type: string
+          example: 'Contenido de la nota'
+        createdAt:
+          type: string
+          format: date-time
+          example: '2024-08-03T12:34:56Z'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2024-08-03T12:34:56Z'
+      required:
+        - title
+        - content
+    NoteAll:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 123
+        title:
+          type: string
+          example: 'Título de la nota'
+    NotePost:
+      type: object
+      properties:
+        title:
+          type: string
+          example: 'Título de la nota'
+        content:
+          type: string
+          example: 'Contenido de la nota'
+      required:
+        - title
+        - content
+    NotePostResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 123
+    
+
